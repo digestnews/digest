@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Админ-панель Дайджеста</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f4f4f9;
+      }
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: inherit;
+      }
+      textarea {
+        height: 120px;
+        resize: vertical;
+      }
+      button {
+        background: #ff5a5f;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #e04e53;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      #message {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 5px;
+        display: none;
+        font-weight: 500;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .news-list {
+        margin-top: 40px;
+        border-top: 2px solid #ddd;
+        padding-top: 20px;
+      }
+      .news-item {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .news-info {
+        flex-grow: 1;
+        padding-right: 15px;
+      }
+      .news-info h4 {
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 16px;
+      }
+      .news-info p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+      }
+      .btn-group {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .edit-btn {
+        background: #007bff;
+        width: auto;
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+      .edit-btn:hover {
+        background: #0056b3;
+      }
+      .delete-btn {
+        background: #dc3545;
+        width: auto;
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+      .delete-btn:hover {
+        background: #c82333;
+      }
+      .editing {
+        border: 3px solid #007bff;
+        background: #e7f3ff;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .editing h2 {
+        color: #007bff;
+      }
+      .cancel-btn {
+        background: #6c757d;
+        margin-top: 10px;
+      }
+      .cancel-btn:hover {
+        background: #545b62;
+      }
+      .image-previews-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .preview-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #ddd;
+      }
+      .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .remove-img-btn {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        padding: 0;
+      }
+      .remove-img-btn:hover {
+        background: #c82333;
+      }
+      .upload-status {
+        font-size: 13px;
+        margin-top: 5px;
+        color: #666;
+      }
+      .upload-status.success {
+        color: #155724;
+      }
+      .upload-status.error {
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 id="formTitle">📝 Добавить новость в дайджест</h2>
+    <form id="newsForm">
+      <input type="hidden" id="editId" value="" />
+      <div class="form-group">
+        <label>Неделя (группа):</label
+        ><input
+          type="text"
+          id="weekgroup"
+          value="week1"
+          placeholder="week1, week2..."
+        />
+      </div>
+      <div class="form-group">
+        <label>Дата:</label
+        ><input
+          type="text"
+          id="date"
+          value="Сегодня"
+          placeholder="11 июня 2026"
+        />
+      </div>
+      <div class="form-group">
+        <label>Заголовок:</label
+        ><input
+          type="text"
+          id="title"
+          required
+          placeholder="Бизнес-завтрак в Смоленске"
+        />
+      </div>
+      <div class="form-group">
+        <label>📷 Изображения (можно выбрать несколько):</label>
+        <input
+          type="file"
+          id="imageFiles"
+          accept="image/png, image/jpeg, image/webp"
+          multiple
+        />
+        <p class="upload-status" id="uploadStatus"></p>
+        <div class="image-previews-container" id="imagePreviews"></div>
+      </div>
+      <div class="form-group">
+        <label>Текст новости:</label
+        ><textarea
+          id="text"
+          required
+          placeholder="<p>Текст новости...</p>"
+        ></textarea>
+      </div>
+      <button type="submit" id="submitBtn">💾 Сохранить</button>
+      <button
+        type="button"
+        id="cancelBtn"
+        class="cancel-btn"
+        style="display: none"
+      >
+        ❌ Отменить редактирование
+      </button>
+    </form>
+    <div id="message"></div>
+    <div class="news-list">
+      <h2>📚 Новости в базе</h2>
+      <div id="newsContainer">Загрузка...</div>
+    </div>
+
+    <script>
+      const form = document.getElementById("newsForm");
+      const messageDiv = document.getElementById("message");
+      const newsContainer = document.getElementById("newsContainer");
+      const formTitle = document.getElementById("formTitle");
+      const submitBtn = document.getElementById("submitBtn");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const editIdInput = document.getElementById("editId");
+      const imageFilesInput = document.getElementById("imageFiles");
+      const imagePreviewsContainer = document.getElementById("imagePreviews");
+      const uploadStatus = document.getElementById("uploadStatus");
+      let currentImages = [];
+
+      async function loadNews() {
+        try {
+          const response = await fetch("/api/news");
+          const news = await response.json();
+          if (news.length === 0) {
+            newsContainer.innerHTML =
+              '<p style="color: #666; text-align: center; padding: 20px;">Пока нет ни одной новости.</p>';
+            return;
+          }
+          newsContainer.innerHTML = news
+            .map(
+              (item) =>
+                `<div class="news-item"><div class="news-info"><h4>${item.title} <small style="color:#999">(${item.date || "Без даты"})</small></h4><p>${item.text.replace(/<[^>]*>/g, "").substring(0, 80)}...</p></div><div class="btn-group"><button class="edit-btn" onclick="editNews(${item.id})">✏️</button><button class="delete-btn" onclick="deleteNews(${item.id})">🗑️</button></div></div>`,
+            )
+            .join("");
+        } catch (error) {
+          newsContainer.innerHTML =
+            '<p style="color: red; text-align: center;">Ошибка загрузки</p>';
+        }
+      }
+
+      window.deleteNews = async (id) => {
+        if (!confirm("Удалить новость?")) return;
+        await fetch("/api/news", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        loadNews();
+      };
+
+      function renderPreviews() {
+        imagePreviewsContainer.innerHTML = "";
+        currentImages.forEach((url, index) => {
+          const div = document.createElement("div");
+          div.className = "preview-item";
+          div.innerHTML = `<img src="${url}" alt="Preview"><button type="button" class="remove-img-btn" onclick="removeImage(${index})">×</button>`;
+          imagePreviewsContainer.appendChild(div);
+        });
+      }
+
+      window.removeImage = (index) => {
+        currentImages.splice(index, 1);
+        renderPreviews();
+      };
+
+      window.editNews = async (id) => {
+        const response = await fetch("/api/news");
+        const news = await response.json();
+        const item = news.find((n) => n.id === id);
+        if (!item) return;
+        editIdInput.value = item.id;
+        document.getElementById("weekgroup").value =
+          item.weekgroup || item.weekGroup || "week1";
+        document.getElementById("date").value = item.date || "";
+        document.getElementById("title").value = item.title;
+        document.getElementById("text").value = item.text;
+        currentImages = item.images || [];
+        renderPreviews();
+        form.classList.add("editing");
+        formTitle.textContent = "✏️ Редактирование новости";
+        submitBtn.textContent = "💾 Обновить новость";
+        cancelBtn.style.display = "block";
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+
+      cancelBtn.addEventListener("click", resetForm);
+      function resetForm() {
+        form.reset();
+        editIdInput.value = "";
+        currentImages = [];
+        renderPreviews();
+        uploadStatus.textContent = "";
+        form.classList.remove("editing");
+        formTitle.textContent = "📝 Добавить новость в дайджест";
+        submitBtn.textContent = "💾 Сохранить";
+        cancelBtn.style.display = "none";
+        submitBtn.disabled = false;
+      }
+
+      // 🚀 Загрузка файлов через Base64 на наш сервер -> ImgBB
+      imageFilesInput.addEventListener("change", async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        uploadStatus.textContent = ` Загрузка ${files.length} файлов...`;
+        uploadStatus.className = "upload-status";
+        submitBtn.disabled = true;
+
+        for (const file of files) {
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            const base64 = event.target.result;
+            try {
+              const res = await fetch("/api/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: base64 }),
+              });
+              const data = await res.json();
+              if (res.ok) {
+                currentImages.push(data.url);
+                renderPreviews();
+                uploadStatus.textContent = `✅ Загружено!`;
+                uploadStatus.className = "upload-status success";
+              } else {
+                uploadStatus.textContent = `❌ Ошибка: ${data.error}`;
+                uploadStatus.className = "upload-status error";
+              }
+            } catch (err) {
+              uploadStatus.textContent = "❌ Ошибка сети";
+              uploadStatus.className = "upload-status error";
+            } finally {
+              submitBtn.disabled = false;
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+        imageFilesInput.value = "";
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = {
+          id: editIdInput.value ? parseInt(editIdInput.value) : undefined,
+          weekgroup: document.getElementById("weekgroup").value,
+          date: document.getElementById("date").value,
+          title: document.getElementById("title").value,
+          images: currentImages,
+          text: document.getElementById("text").value,
+        };
+        const isEdit = !!editIdInput.value;
+        const method = isEdit ? "PUT" : "POST";
+        try {
+          const response = await fetch("/api/news", {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          if (response.ok) {
+            messageDiv.textContent = isEdit
+              ? "✅ Новость обновлена!"
+              : "✅ Новость создана!";
+            messageDiv.className = "success";
+            messageDiv.style.display = "block";
+            resetForm();
+            loadNews();
+            setTimeout(() => (messageDiv.style.display = "none"), 3000);
+          } else {
+            messageDiv.textContent = `❌ Ошибка: ${result.error}`;
+            messageDiv.className = "error";
+            messageDiv.style.display = "block";
+          }
+        } catch (error) {
+          messageDiv.textContent = "❌ Ошибка сети";
+          messageDiv.className = "error";
+          messageDiv.style.display = "block";
+        }
+      });
+      loadNews();
+    </script>
+  </body>
+</html>

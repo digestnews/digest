@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="description" content="Еженедельный дайджест новостей А‑СЕТЬ" />
+    <title>Дайджест | А‑СЕТЬ</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.8/index.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #ff5a5f;
+        --bg-color: #f2f2f7;
+        --card-bg: #ffffff;
+        --text-main: #1d1d1f;
+        --text-secondary: #86868b;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+        --radius-lg: 24px;
+        --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-main);
+        line-height: 1.5;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px 16px;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 32px;
+        padding-top: 20px;
+      }
+      header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary) 0%, #ff8a8d 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+      .week-section {
+        margin-bottom: 24px;
+        animation: fadeIn 0.5s ease forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .week-section:first-child .week-header {
+        border: 2px solid var(--primary);
+        box-shadow: 0 4px 12px rgba(255, 90, 95, 0.2);
+      }
+      .week-section:first-child .week-badge {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      .week-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        margin-bottom: 16px;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition);
+      }
+      .week-header:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+      .week-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .week-badge {
+        background: var(--primary);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .week-badge.archived {
+        background: #aeaeb2;
+      }
+      .week-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+      .week-date {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+      .toggle-icon {
+        color: var(--primary);
+        transition: transform 0.3s ease;
+      }
+      .week-header.collapsed .toggle-icon {
+        transform: rotate(-90deg);
+      }
+      .week-content.collapsed {
+        display: none;
+      }
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        margin-bottom: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+      .collage-grid {
+        display: grid;
+        gap: 2px;
+        background: #eee;
+        aspect-ratio: 16/9;
+      }
+      .collage-item {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        background: #ddd;
+      }
+      .collage-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .collage-grid[data-count="1"] {
+        grid-template-columns: 1fr;
+      }
+      .collage-grid[data-count="2"] {
+        grid-template-columns: 1fr 1fr;
+      }
+      .collage-grid[data-count="3"] {
+        grid-template-columns: 1.5fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .collage-grid[data-count="3"] .collage-item:first-child {
+        grid-row: 1 / -1;
+      }
+      .collage-grid[data-count="4"] {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .photo-count-badge {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+      }
+      .card-content {
+        padding: 20px;
+      }
+      .card-content h2 {
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+        font-weight: 700;
+      }
+      .card-content p {
+        color: #444;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+      }
+      .show-all-btn {
+        text-align: center;
+        margin: 32px 0;
+      }
+      .neo-btn {
+        appearance: none;
+        border: none;
+        background: var(--text-main);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .lightbox-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+      .lightbox-modal.active {
+        display: flex;
+      }
+      .lightbox-img {
+        max-width: 92vw;
+        max-height: 85vh;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+      .lb-control {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+      .lb-close {
+        top: 24px;
+        right: 24px;
+      }
+      .lb-prev {
+        left: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .lb-next {
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .lb-counter {
+        position: absolute;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.8);
+        background: rgba(0, 0, 0, 0.4);
+        padding: 6px 16px;
+        border-radius: 20px;
+      }
+      .footer {
+        text-align: center;
+        padding: 40px 0 20px;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>ДАЙДЖЕСТ А‑СЕТЬ</h1>
+        <p class="subtitle">Еженедельный выпуск региональных новостей</p>
+      </header>
+      <main id="mainContent">
+        <p style="text-align: center; padding: 40px; color: #888">
+          Загрузка новостей...
+        </p>
+      </main>
+      <div id="showAllWrapper" class="show-all-btn hidden">
+        <button class="neo-btn" id="toggleArchivesBtn">
+          <i class="fas fa-archive"></i> <span>Показать архив</span>
+        </button>
+      </div>
+      <footer class="footer">
+        <p>© 2026 А‑СЕТЬ | Еженедельные выпуски каждую пятницу</p>
+      </footer>
+    </div>
+    <div id="lightbox" class="lightbox-modal">
+      <button class="lb-control lb-close"><i class="fas fa-times"></i></button>
+      <button class="lb-control lb-prev">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <img id="lbImage" class="lightbox-img" alt="Просмотр фото" />
+      <button class="lb-control lb-next">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div id="lbCounter" class="lb-counter"></div>
+    </div>
+    <script>
+      let state = {
+        archivesVisible: false,
+        lightbox: { isOpen: false, images: [], index: 0 },
+      };
+      let articlesData = [];
+
+      async function fetchNews() {
+        try {
+          const response = await fetch("/api/news");
+          if (!response.ok) throw new Error("Ошибка сервера");
+          articlesData = await response.json();
+          render();
+        } catch (error) {
+          console.error("Ошибка загрузки:", error);
+          document.getElementById("mainContent").innerHTML =
+            '<p style="text-align:center; padding:40px; color:red;">❌ Не удалось загрузить новости.</p>';
+        }
+      }
+
+      const getWeekNum = (str) => parseInt(str.replace(/\D/g, "")) || 0;
+
+      function groupByWeek() {
+        const groups = {};
+        articlesData.forEach((a) => {
+          // Поддержка и weekGroup (локально) и weekgroup (из Supabase)
+          const weekKey = a.weekGroup || a.weekgroup || "week1";
+          if (!groups[weekKey]) groups[weekKey] = [];
+          groups[weekKey].push({ ...a, weekGroup: weekKey });
+        });
+        return Object.keys(groups)
+          .sort((a, b) => getWeekNum(b) - getWeekNum(a))
+          .map((key) => ({
+            id: key,
+            items: groups[key],
+            date: groups[key][0].date,
+          }));
+      }
+
+      function render() {
+        const container = document.getElementById("mainContent");
+        const weeks = groupByWeek();
+        if (!weeks.length) {
+          container.innerHTML =
+            '<p style="text-align:center; color:#888; padding:40px;">Новостей пока нет 😔</p>';
+          document.getElementById("showAllWrapper").classList.add("hidden");
+          return;
+        }
+        const freshWeekId = weeks[0].id;
+        const hasArchives = weeks.length > 1;
+        let html = "";
+        weeks.forEach((week) => {
+          const isFresh = week.id === freshWeekId;
+          const isArchive = !isFresh;
+          const isCollapsed = isArchive && !state.archivesVisible;
+          const displayStyle =
+            isArchive && !state.archivesVisible ? "display:none;" : "";
+          html += `<div class="week-section" style="${displayStyle}">
+            <div class="week-header ${isCollapsed ? "collapsed" : ""}" onclick="toggleWeek(this)">
+              <div class="week-header-left">
+                <span class="week-badge ${isArchive ? "archived" : ""}">${isFresh ? "🔥 Свежий выпуск" : "📚 Архив"}</span>
+                <span class="week-title">Выпуск #${getWeekNum(week.id)}</span>
+                <span class="week-date">${week.date}</span>
+              </div>
+              <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="week-content ${isCollapsed ? "collapsed" : ""}">${week.items.map(renderCard).join("")}</div>
+          </div>`;
+        });
+        container.innerHTML = html;
+        const btnWrapper = document.getElementById("showAllWrapper");
+        if (hasArchives) {
+          btnWrapper.classList.remove("hidden");
+          updateArchiveBtnText();
+        } else {
+          btnWrapper.classList.add("hidden");
+        }
+      }
+
+      function updateArchiveBtnText() {
+        const span = document.querySelector("#toggleArchivesBtn span");
+        span.textContent = state.archivesVisible
+          ? "Скрыть архив"
+          : "Показать архив";
+      }
+
+      function renderCard(article) {
+        const imgs = article.images || [];
+        const collageHtml = imgs.length
+          ? `<div class="collage-wrapper" style="position:relative;">
+          <div class="collage-grid" data-count="${Math.min(imgs.length, 4)}">
+            ${imgs
+              .slice(0, 4)
+              .map(
+                (src, i) =>
+                  `<div class="collage-item" onclick='openLightbox(${JSON.stringify(imgs)}, ${i})'><img src="${src}" loading="lazy" alt="Фото"></div>`,
+              )
+              .join("")}
+          </div>
+          ${imgs.length > 1 ? `<div class="photo-count-badge"><i class="fas fa-camera"></i> ${imgs.length}</div>` : ""}
+        </div>`
+          : "";
+        return `<article class="card">${collageHtml}<div class="card-content"><h2>${article.title}</h2><div class="text-body">${article.text}</div></div></article>`;
+      }
+
+      window.toggleWeek = function (headerEl) {
+        const content = headerEl.nextElementSibling;
+        headerEl.classList.toggle("collapsed");
+        content.classList.toggle("collapsed");
+      };
+
+      document
+        .getElementById("toggleArchivesBtn")
+        .addEventListener("click", () => {
+          state.archivesVisible = !state.archivesVisible;
+          document.querySelectorAll(".week-section").forEach((el) => {
+            const badge = el.querySelector(".week-badge");
+            if (badge && badge.textContent.includes("Архив"))
+              el.style.display = state.archivesVisible ? "block" : "none";
+          });
+          updateArchiveBtnText();
+        });
+
+      const lbModal = document.getElementById("lightbox");
+      const lbImg = document.getElementById("lbImage");
+      const lbCounter = document.getElementById("lbCounter");
+      window.openLightbox = function (images, index) {
+        state.lightbox = { isOpen: true, images, index };
+        updateLbView();
+        lbModal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      };
+      function closeLightbox() {
+        state.lightbox.isOpen = false;
+        lbModal.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+      function updateLbView() {
+        const { images, index } = state.lightbox;
+        lbImg.src = images[index];
+        lbCounter.textContent = `${index + 1} / ${images.length}`;
+      }
+      function navLb(dir) {
+        const { images, index } = state.lightbox;
+        const nextIdx = index + dir;
+        if (nextIdx >= 0 && nextIdx < images.length) {
+          state.lightbox.index = nextIdx;
+          updateLbView();
+        }
+      }
+      document.querySelector(".lb-close").onclick = closeLightbox;
+      document.querySelector(".lb-prev").onclick = () => navLb(-1);
+      document.querySelector(".lb-next").onclick = () => navLb(1);
+      lbModal.onclick = (e) => {
+        if (e.target === lbModal) closeLightbox();
+      };
+      document.addEventListener("keydown", (e) => {
+        if (!state.lightbox.isOpen) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowLeft") navLb(-1);
+        if (e.key === "ArrowRight") navLb(1);
+      });
+      document.addEventListener("DOMContentLoaded", fetchNews);
+    </script>
+  </body>
+</html>
